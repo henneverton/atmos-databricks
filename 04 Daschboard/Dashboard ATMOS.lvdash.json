@@ -1,0 +1,454 @@
+{
+  "datasets": [
+    {
+      "name": "198e1198",
+      "displayName": "perfil_sazonal_mensal",
+      "config": {
+        "version": "1.1",
+        "source": "atmos.gold.perfil_sazonal_mensal",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "registro_mais_quente",
+      "displayName": "Registro Mais Quente",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT ano, mes, cidade, temperatura_maxima_abs_c FROM atmos.gold.perfil_sazonal_mensal ORDER BY temperatura_maxima_abs_c DESC NULLS LAST LIMIT 1\n",
+        "dimensions": [
+          {
+            "name": "ano",
+            "expr": "`ano`",
+            "displayName": "Ano"
+          },
+          {
+            "name": "mes",
+            "expr": "`mes`",
+            "displayName": "Mês"
+          },
+          {
+            "name": "cidade",
+            "expr": "`cidade`",
+            "displayName": "Cidade"
+          },
+          {
+            "name": "rotulo",
+            "expr": "CONCAT(CAST(`ano` AS STRING), ' - Mês ', CAST(`mes` AS STRING), ' - ', `cidade`)",
+            "displayName": "Período"
+          }
+        ],
+        "measures": [
+          {
+            "name": "temperatura_maxima",
+            "expr": "MAX(`temperatura_maxima_abs_c`)",
+            "displayName": "Temperatura Máxima (°C)",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "registro_mais_frio",
+      "displayName": "Registro Mais Frio",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT ano, mes, cidade, temperatura_minima_abs_c FROM atmos.gold.perfil_sazonal_mensal ORDER BY temperatura_minima_abs_c ASC NULLS LAST LIMIT 1\n",
+        "dimensions": [
+          {
+            "name": "rotulo",
+            "expr": "CONCAT(CAST(`ano` AS STRING), ' - Mês ', CAST(`mes` AS STRING), ' - ', `cidade`)",
+            "displayName": "Período"
+          }
+        ],
+        "measures": [
+          {
+            "name": "temperatura_minima",
+            "expr": "MIN(`temperatura_minima_abs_c`)",
+            "displayName": "Temperatura Mínima (°C)",
+            "format": {
+              "type": "number",
+              "decimalPlaces": {
+                "type": "exact",
+                "places": 1.0
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "6a27ff50",
+      "displayName": "Untitled page",
+      "layout": [
+        {
+          "widget": {
+            "name": "abce29e8",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "198e1198",
+                  "fields": [
+                    {
+                      "name": "max(timestamp_processamento)",
+                      "expression": "MAX(`timestamp_processamento`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Última Atualização"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(timestamp_processamento)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 9,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "8e914b65",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "198e1198",
+                  "fields": [
+                    {
+                      "name": "cidade",
+                      "expression": "`cidade`"
+                    },
+                    {
+                      "name": "ano",
+                      "expression": "`ano`"
+                    },
+                    {
+                      "name": "avg(precipitacao_total_mm)",
+                      "expression": "AVG(`precipitacao_total_mm`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Média de Precipitação por Ano e Cidade"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "ano",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(precipitacao_total_mm)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "cidade",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 10,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "2dfa66c1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "198e1198",
+                  "fields": [
+                    {
+                      "name": "ano",
+                      "expression": "`ano`"
+                    },
+                    {
+                      "name": "cidade",
+                      "expression": "`cidade`"
+                    },
+                    {
+                      "name": "mes",
+                      "expression": "`mes`"
+                    },
+                    {
+                      "name": "avg(temperatura_media_c)",
+                      "expression": "AVG(`temperatura_media_c`)"
+                    }
+                  ],
+                  "cubeGroupingSets": {
+                    "sets": [
+                      {
+                        "fieldNames": [
+                          "ano",
+                          "cidade"
+                        ]
+                      },
+                      {
+                        "fieldNames": [
+                          "mes"
+                        ]
+                      }
+                    ]
+                  },
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`ano`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`cidade`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`mes`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Média de Temperatura por Mês, Ano e Cidade",
+                  "fields": []
+                }
+              },
+              "version": 4,
+              "widgetType": "pivot",
+              "encodings": {
+                "rows": {
+                  "fields": [
+                    {
+                      "fieldName": "ano",
+                      "scale": {
+                        "type": "categorical"
+                      }
+                    },
+                    {
+                      "fieldName": "cidade",
+                      "scale": {
+                        "type": "categorical"
+                      }
+                    }
+                  ]
+                },
+                "columns": {
+                  "fields": [
+                    {
+                      "fieldName": "mes",
+                      "scale": {
+                        "type": "categorical"
+                      }
+                    }
+                  ]
+                },
+                "cells": {
+                  "fields": [
+                    {
+                      "fieldName": "avg(temperatura_media_c)",
+                      "cellType": "text"
+                    }
+                  ],
+                  "displayAs": "rows"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "3d95509c",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "registro_mais_quente",
+                  "fields": [
+                    {
+                      "name": "rotulo",
+                      "expression": "`rotulo`"
+                    },
+                    {
+                      "name": "measure(temperatura_maxima)",
+                      "expression": "MEASURE(`temperatura_maxima`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "`rotulo`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Registro Mais Quente",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(temperatura_maxima)"
+                },
+                "period": {
+                  "fieldName": "rotulo",
+                  "hideLabels": false
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 4,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "a19ad57b",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "registro_mais_frio",
+                  "fields": [
+                    {
+                      "name": "rotulo",
+                      "expression": "`rotulo`"
+                    },
+                    {
+                      "name": "measure(temperatura_minima)",
+                      "expression": "MEASURE(`temperatura_minima`)"
+                    }
+                  ],
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "DESC",
+                      "expression": "`rotulo`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Registro Mais Frio"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(temperatura_minima)"
+                },
+                "period": {
+                  "fieldName": "rotulo",
+                  "hideLabels": false
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 7,
+            "width": 4,
+            "height": 3
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
